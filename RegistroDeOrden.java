@@ -46,17 +46,28 @@ public class RegistroDeOrden {
         if (ordenes.isEmpty()) {
             System.out.println("No hay órdenes registradas.");
         } else {
-            for (OrdenDeCompra orden : ordenes) {
-                System.out.println(orden);
+            System.out.println("Listando órdenes (con hilo):");
+            Thread listarHilo = new Thread(() -> {
+                for (OrdenDeCompra orden : ordenes) {
+                    System.out.println(orden);
+                    try {
+                        Thread.sleep(500); // Simula un retraso por cada impresión
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
+                }
+            });
+            listarHilo.start();
+            try {
+                listarHilo.join(); // Asegura que el hilo termine antes de continuar
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
             }
         }
     }
 
     public LinkedList<OrdenDeCompra> getOrdenes() {
         return ordenes;
-    }
-
-    public void listarHistorial() {
     }
 }
 

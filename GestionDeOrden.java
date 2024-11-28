@@ -1,5 +1,7 @@
 package Concienciabienestar;
 import java.util.Scanner;
+import java.util.Stack;
+
 public class GestionDeOrden {
     private RegistroDeOrden registro;
     private Inventario inventario;
@@ -24,12 +26,16 @@ public class GestionDeOrden {
                 int opcion = scanner.nextInt();
 
                 if (opcion == 1) {
-                    orden.setEstado("Completada");
-                    System.out.println("Orden completada.");
+                    ejecutarConHilo(() -> {
+                        orden.setEstado("Completada");
+                        System.out.println("Orden completada.");
+                    });
                 } else if (opcion == 2) {
-                    orden.setEstado("Anulada");
-                    inventario.actualizarStock(orden.getCodigoMedicamento(), orden.getCantidad());
-                    System.out.println("Orden anulada y stock actualizado.");
+                    ejecutarConHilo(() -> {
+                        orden.setEstado("Anulada");
+                        inventario.actualizarStock(orden.getCodigoMedicamento(), orden.getCantidad());
+                        System.out.println("Orden anulada y stock actualizado.");
+                    });
                 } else {
                     System.out.println("Opción inválida.");
                 }
@@ -37,5 +43,15 @@ public class GestionDeOrden {
             }
         }
         System.out.println("Orden no encontrada.");
+    }
+
+    private void ejecutarConHilo(Runnable tarea) {
+        Thread hilo = new Thread(tarea);
+        hilo.start();
+        try {
+            hilo.join(); // Espera que el hilo termine
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 }

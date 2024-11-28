@@ -5,7 +5,7 @@ public class Inventario {
     private LinkedList<Medicamento> medicamentos;
 
     public Inventario() {
-        medicamentos = new LinkedList<>();
+        medicamentos = new LinkedList<>(); // Especifica el tipo genérico
         inicializarInventario();
     }
 
@@ -22,17 +22,19 @@ public class Inventario {
         medicamentos.add(new Medicamento(110, "Salbutamol", 15, "2024-09-15"));
     }
 
-    public LinkedList<Medicamento> getMedicamentos() {
-        return medicamentos;
+    public Medicamento buscarMedicamento(int codigo) {
+        return buscarMedicamentoRecursivo(codigo, 0);
     }
 
-    public Medicamento buscarMedicamento(int codigo) {
-        for (Medicamento med : medicamentos) {
-            if (med.getCodigo() == codigo) {
-                return med;
-            }
+    private Medicamento buscarMedicamentoRecursivo(int codigo, int index) {
+        if (index >= medicamentos.size()) {
+            return null; // No encontrado
         }
-        return null;
+        Medicamento med = medicamentos.get(index);
+        if (med.getCodigo() == codigo) {
+            return med; // Encontrado
+        }
+        return buscarMedicamentoRecursivo(codigo, index + 1); // Siguiente elemento
     }
 
     public void actualizarStock(int codigo, int cantidad) {
@@ -40,6 +42,10 @@ public class Inventario {
         if (med != null) {
             med.setCantidad(med.getCantidad() + cantidad);
         }
+    }
+
+    public LinkedList<Medicamento> getMedicamentos() {
+        return medicamentos;
     }
 }
 
